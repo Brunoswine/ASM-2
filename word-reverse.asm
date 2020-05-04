@@ -1,13 +1,22 @@
 name "word-reverse"
 
+model tiny
 org 100h
 
 jmp start
 
 string1 db 255 dup('$')
 instr db "enter string:",0Dh,0Ah,'$'
+entr1 db " ",0Dh,0Ah,'$' 
 
-start: mov dx,offset instr ; инструкции
+entr proc
+mov dx,offset entr1
+mov ah,09h
+int 21h     
+ret
+entr endp
+
+start: mov dx,offset instr
 mov ah,09h
 int 21h
 
@@ -24,7 +33,7 @@ mov [bx],'$' ; добавить символ конца строки
 xor dx,dx
 xor ax,ax
 
-lea bx, string1 ; сохранение адреса строки (вычисление адреса string)
+mov bx,offset string1 ; сохранение адреса строки (вычисление адреса string)
 add bx, 2 ; adress+2
 
 mov si, bx
@@ -68,9 +77,10 @@ mov ah,[si]
 cmp ah,'$'
 jne next_byte
 
+call entr
 mov dx,offset string1
 add dx,2
 mov ah, 09h ; вывод на экран
 int 21h
 
-ret
+end start
